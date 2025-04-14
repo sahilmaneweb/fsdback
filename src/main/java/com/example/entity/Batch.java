@@ -17,7 +17,7 @@ public class Batch {
     private String venue;
 
     @OneToMany(mappedBy = "batch", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference 
+    @JsonBackReference
     private List<Group> groups; // One Batch can have multiple Groups
 
     // Constructors

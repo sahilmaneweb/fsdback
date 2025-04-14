@@ -36,8 +36,7 @@ public class UserController {
 
     // Login - Returns JWT and role (JWT logic is skipped for now)
     @PostMapping
-    public Map<String, String> login(@RequestParam String username, 
-                                     @RequestParam String password) {
+    public Map<String, String> login(@RequestParam String username, @RequestParam String password) {
         User user = userRepository.findByUsername(username);
         Map<String, String> response = new HashMap<>();
 
