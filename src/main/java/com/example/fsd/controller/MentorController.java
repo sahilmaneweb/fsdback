@@ -95,7 +95,7 @@ public class MentorController {
             user.setPassword(hashedPassword);
 
 
-            user.setRole("Mentor");
+            user.setRole("mentor");
             userRepo.save(user);
             response.setMessage("Mentor added successfully");
             response.setStatus(true);

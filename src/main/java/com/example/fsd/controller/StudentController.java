@@ -1,5 +1,6 @@
 package com.example.fsd.controller;
 
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,28 @@ public class StudentController {
     public UserRepository userRepo;
     @Autowired
     public BatchRepository batchRepo;
+
+    @GetMapping(path="/student/profile/{studentUid}",produces="application/json")
+    public ResponseEntity<ResponseBean> getStudentById(@PathVariable String studentUid){
+        ResponseBean response = new ResponseBean();
+        try{
+            Student student = studentRepo.findById(studentUid).orElse(null);
+            if(student == null){
+                response.setMessage("Student not found");
+                response.setStatus(false);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            response.setStatus(true);
+            response.setMessage("Student Found");
+            response.setData(student);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        }catch(Exception e){
+            response.setMessage("Error retrieving students: " + e.getMessage());
+            response.setStatus(false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
 
     // Get all students data
@@ -134,7 +157,7 @@ public class StudentController {
             String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
             System.out.println(hashedPassword);
             user.setPassword(hashedPassword);
-            user.setRole("Student");
+            user.setRole("student");
             userRepo.save(user);
 
 
@@ -153,6 +176,35 @@ public class StudentController {
 
     //Update student record
     @PutMapping(path="/admin/student/{studentId}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<ResponseBean> updateStudentByStudent(@RequestBody StudentRequest student, @PathVariable String studentId) {
+        ResponseBean response = new ResponseBean();
+        try {
+            Student existingStudent = studentRepo.findById(studentId).orElse(null);
+            if (existingStudent == null) {
+                response.setMessage("Student not found");
+                response.setStatus(false);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            
+            existingStudent.setName(student.getName());
+            existingStudent.setEmail(student.getEmail());
+            existingStudent.setPhone(student.getPhone());
+            existingStudent.setGender(student.getGender());
+            existingStudent.setAddress(student.getAddress());
+            
+
+            Student updatedStudent = studentRepo.save(existingStudent);
+            response.setMessage("Student updated successfully");
+            response.setStatus(true);
+            response.setData(updatedStudent);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage("Error updating student: " + e.getMessage());
+            response.setStatus(false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    @PutMapping(path="/student/{studentId}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ResponseBean> updateStudent(@RequestBody StudentRequest student, @PathVariable String studentId) {
         ResponseBean response = new ResponseBean();
         try {

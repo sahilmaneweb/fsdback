@@ -70,11 +70,21 @@ public class GroupController {
         } 
     }
 
-    @GetMapping(path="/student/groups/{groupId}", produces = "application/json")
-    public ResponseEntity<ResponseBean> getGroupForStudent(@PathVariable String groupId) {
+    @GetMapping(path="/student/groups/{uid}", produces = "application/json")
+    public ResponseEntity<ResponseBean> getGroupForStudent(@PathVariable String uid) {
         ResponseBean responseBean = new ResponseBean();
         try {
-            Group group = groupRepository.findById(groupId).orElse(null);
+            Student student = studentRepository.findById(uid).orElse(null);
+            if (student == null) {
+                responseBean.setStatus(false);
+                responseBean.setMessage("Student not found");
+                return ResponseEntity.status(404).body(responseBean);
+            }else if(student.getGroup()==null){
+                responseBean.setStatus(false);
+                responseBean.setMessage("Student does not exist in any group");
+                return ResponseEntity.status(404).body(responseBean);
+            }
+            Group group = groupRepository.findById(student.getGroup().getGroupId()).orElse(null);
             if (group == null) {
                 responseBean.setStatus(false);
                 responseBean.setMessage("Group not found");

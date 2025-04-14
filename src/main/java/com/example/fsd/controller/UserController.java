@@ -23,7 +23,7 @@ import com.example.fsd.response.UserDto.UserLogin;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 public class UserController {
     @Autowired
     public UserRepository userRepository;
@@ -116,8 +116,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
-    @PostMapping(path = "/forgotPassword", consumes = "application/json", produces = "application/json")
 
 
     @GetMapping(path = "/hello")
